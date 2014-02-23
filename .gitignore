@@ -1,2 +1,7 @@
 config.php
 *.db
+.buildpath
+.project
+.settings
+deploy.sh
+
