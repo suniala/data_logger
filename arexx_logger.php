@@ -6,7 +6,7 @@ class Measurement
 {
 	public $id;
 	public $device;
-	public $taken_local_ts;
+	public $taken_utc_s;
 	public $value;
 }
 
@@ -16,7 +16,7 @@ class Device
 	public $external_id;
 	public $type_id;
 	public $label;
-	public $last_measurement_local_ts;
+	public $last_measurement_utc_s;
 }
 
 function log_data($dbh, $measurement)
@@ -31,7 +31,7 @@ function skip_logging($measurement)
 	$skip = TRUE;
 
 	$curr_time = time();
-	$mod_time = $measurement->device->last_measurement_local_ts;
+	$mod_time = $measurement->device->last_measurement_utc_s;
 	$diff_time = $curr_time - $mod_time;
 	if ($diff_time > ($MEASUREMENT_INTERVAL_SECONDS)) {
 		$skip = FALSE;
@@ -44,24 +44,24 @@ function skip_logging($measurement)
 
 function write_data($dbh, $measurement)
 {
-	$stmt = $dbh->prepare("insert into measurement (device_id, taken_local_ts, value) values (?, ?, ?)");
+	$stmt = $dbh->prepare("insert into measurement (device_id, taken_utc_s, value) values (?, ?, ?)");
 	$stmt->bindParam(1, $measurement->device->id);
-	$stmt->bindParam(2, $measurement->taken_local_ts);
+	$stmt->bindParam(2, $measurement->taken_utc_s);
 	$stmt->bindParam(3, $measurement->value);
 	$stmt->execute();
 }
 
 function update_device_ts($dbh, $measurement)
 {
-	$stmt = $dbh->prepare("update device set last_measurement_local_ts = ? where id = ?");
-	$stmt->bindParam(1, $measurement->taken_local_ts);
+	$stmt = $dbh->prepare("update device set last_measurement_utc_s = ? where id = ?");
+	$stmt->bindParam(1, $measurement->taken_utc_s);
 	$stmt->bindParam(2, $measurement->device->id);
 	$stmt->execute();
 }
 
 function find_device($dbh, $external_id, $type_id)
 {
-	$stmt = $dbh->prepare("select id, external_id, type_id, label, last_measurement_local_ts from device where external_id=? and type_id=?");
+	$stmt = $dbh->prepare("select id, external_id, type_id, label, last_measurement_utc_s from device where external_id=? and type_id=?");
 	if ($stmt->execute(array($external_id, $type_id))) {
 		while ($row = $stmt->fetch()) {
 			$device = new Device();
@@ -69,7 +69,7 @@ function find_device($dbh, $external_id, $type_id)
 			$device->external_id = $row["external_id"];
 			$device->type_id = $row["type_id"];
 			$device->label = $row["label"];
-			$device->last_measurement_local_ts = $row["last_measurement_local_ts"];
+			$device->last_measurement_utc_s = $row["last_measurement_utc_s"];
 			return $device;
 		}
 	}
@@ -91,7 +91,7 @@ function parse_measurement($dbh)
 		$m = new Measurement();
 		$m->device = $device;
 		$m->value = $value;
-		$m->taken_local_ts = $timestamp;
+		$m->taken_utc_s = $timestamp;
 	}
 	
 	return $m;	

@@ -1,7 +1,7 @@
-insert into device (external_id, type_id, label, last_measurement_local_ts) values ("10691", "1", "Lämpötila kellari", null);
-insert into device (external_id, type_id, label, last_measurement_local_ts) values ("17670", "3", "Kosteus kellari", null);
-insert into device (external_id, type_id, label, last_measurement_local_ts) values ("17878", "1", "Lämpötila vaja", null);
-insert into device (external_id, type_id, label, last_measurement_local_ts) values ("17878", "3", "Kosteus vaja", null);
+insert into device (external_id, type_id, label) values ("10691", "1", "Lämpötila kellari");
+insert into device (external_id, type_id, label) values ("17670", "3", "Kosteus kellari");
+insert into device (external_id, type_id, label) values ("17878", "1", "Lämpötila vaja");
+insert into device (external_id, type_id, label) values ("17878", "3", "Kosteus vaja");
 
 /*
 -rw-r--r-- 1 suniala suniala 4,6M helmi 22 15:59 arexx_10691.csv
