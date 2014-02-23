@@ -14,6 +14,7 @@ create table device (
        external_id text not null,
        type_id text not null,
        label text not null,
+       filename text not null,
        last_measurement_utc_s integer
 );
 
