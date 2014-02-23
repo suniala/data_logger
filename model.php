@@ -1,5 +1,7 @@
 <?php
 
+include "config.php";
+
 class Measurement
 {
 	public $id;
