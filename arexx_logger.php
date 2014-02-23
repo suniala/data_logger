@@ -3,10 +3,10 @@
 include "model.php";
 include "config.php";
 
-function log_data($dbh, $measurement)
+function log_data($dao, $measurement)
 {
-	$dbh->write_data($measurement);
-	$dbh->update_device_ts($measurement);
+	$dao->write_data($measurement);
+	$dao->update_device_ts($measurement);
 }
 
 function skip_logging($measurement)
@@ -26,7 +26,7 @@ function skip_logging($measurement)
 	return $skip;
 }
 
-function parse_measurement($dbh)
+function parse_measurement($dao)
 {
 	$type = $_POST["type"];
 	$id = $_POST["id"];
@@ -34,7 +34,7 @@ function parse_measurement($dbh)
 	$timestamp = time();
 
 	$m = null;
-	$device = $dbh->find_device($id, $type);
+	$device = $dao->find_device($id, $type);
 
 	if ($device != null) {
 		$m = new Measurement();
@@ -52,20 +52,20 @@ if ($key != $LOGGER_PASSWORD)
 	die();
 }
 
-$dbh = new LoggerDao();
+$dao = new LoggerDao();
 try {
-	$dbh->beginTransaction();
+	$dao->beginTransaction();
 	
-	$measurement = parse_measurement($dbh);
+	$measurement = parse_measurement($dao);
 	if ($measurement != null) {
 		if (!skip_logging($measurement)) {
-			log_data($dbh, $measurement);
+			log_data($dao, $measurement);
 		}
 	}
 
-	$dbh->commit();
+	$dao->commit();
 } catch (Exception $e) {
-	$dbh->rollBack();
+	$dao->rollBack();
 	print($e);
 }
 ?>
