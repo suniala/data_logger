@@ -1,0 +1,1 @@
+- Enable foreign key support per connection. See http://sqlite.org/foreignkeys.html#fk_enable
