@@ -10,7 +10,7 @@ for device_id_filename in $devices_id_filename; do
     device_filename=$(echo $device_id_filename | gawk -F'|' '{print $2}')
     echo "Device $device_id goes to file $device_filename"
 
-    sqlite3 -batch -csv data/data_logger.db "select datetime(m.taken_utc_s, 'unixepoch', 'localtime'), m.value from measurement m where m.device_id=$device_id order by m.taken_utc_s;" > $output_dir/$device_filename
+    sqlite3 -batch -csv $database "select datetime(m.taken_utc_s, 'unixepoch', 'localtime'), m.value from measurement m where m.device_id=$device_id order by m.taken_utc_s;" > $output_dir/$device_filename
 done
 
 echo "Wrote files to $output_dir"
