@@ -10,3 +10,4 @@ insert into device (external_id, type_id, label, filename) values ("18432", "1",
 insert into device (external_id, type_id, label, filename) values ("18432", "3", "rh 18432", "18432_rh.csv");
 insert into device (external_id, type_id, label, filename) values ("18448", "1", "temp 18448", "18448_temp.csv");
 insert into device (external_id, type_id, label, filename) values ("18448", "3", "rh 18448", "18448_rh.csv");
+insert into device (external_id, type_id, label, filename) values ("test_dev_1", "1", "test device 1", "test_dev_1.csv");
