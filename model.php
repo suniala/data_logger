@@ -34,18 +34,18 @@ class LoggerDao
 	public function beginTransaction()
 	{
 		$this->dbh->beginTransaction();
-	}	
-	
+	}
+
 	public function commit()
 	{
 		$this->dbh->commit();
-	}	
-	
+	}
+
 	public function rollBack()
 	{
 		$this->dbh->rollBack();
-	}	
-	
+	}
+
 	public function write_data($measurement)
 	{
 		$stmt = $this->dbh->prepare("insert into measurement (device_id, taken_utc_s, value) values (?, ?, ?)");

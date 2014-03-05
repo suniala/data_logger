@@ -42,8 +42,8 @@ function parse_measurement($dao)
 		$m->value = $value;
 		$m->taken_utc_s = $timestamp;
 	}
-	
-	return $m;	
+
+	return $m;
 }
 
 $key = $_POST["key"];
@@ -55,7 +55,7 @@ if ($key != $LOGGER_PASSWORD)
 $dao = new LoggerDao();
 try {
 	$dao->beginTransaction();
-	
+
 	$measurement = parse_measurement($dao);
 	if ($measurement != null) {
 		if (!skip_logging($measurement)) {
