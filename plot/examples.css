@@ -96,6 +96,11 @@ input[type=checkbox] {
 	border-spacing: 5px;
 }
 
+form li {
+	list-style-type: none;
+	display: inline;
+}
+
 ul.properties li {
 	list-style-type: none;
 	display: inline;

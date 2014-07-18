@@ -68,26 +68,38 @@ print "];";
 $devices = $dao->find_devices();
 
 foreach ($devices as $device) {
-	print "<option value=\"" . $device->id . "\">" . $device->label . "</option>";
+	$select_attr = "";
+	if ($current_device->id == $device->id) {
+		$select_attr = " selected";
+	}
+	
+	print "<option "
+		. "value=\"" . $device->id . "\""
+		. $select_attr
+		. ">"
+		. $device->label
+		. "</option>";
 }
 ?>
 						</select>
 					</li>
-					<li>Loppupvm: 
-					<input type="text" name="end_date" id="datepicker" value="<?php print date("Y-m-d", $end_date_ts)?>"/></li>
+					<li>Loppupäivä: 
+						<input type="text" name="end_date" id="datepicker" value="<?php print date("Y-m-d", $end_date_ts)?>"/></li>
+					<li><input type="submit" value="avaa" /></li>
 				</ul>
 				
-				<input type="submit" />
 			</form>
 		</div>
 
 		<div>
+<?php if ($current_device != null) { ?>
 			<ul class="properties">
 				<li>Laitteen nimi: <?php print $current_device->label ?></li>
 				<li>Ulkoinen tunniste: <?php print $current_device->external_id ?></li>
 				<li>Tyyppi: <?php print $current_device->type_id ?></li>
 				<li>Sisäinen tunniste: <?php print $current_device->id ?></li>
 			</ul>
+<?php }?>
 		</div>
 		
 		<div class="demo-container">
