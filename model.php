@@ -63,6 +63,27 @@ class LoggerDao
 		$stmt->execute();
 	}
 
+	public function find_devices()
+	{
+		$devices = array();
+		
+		$stmt = $this->dbh->prepare("select id, external_id, type_id, label, filename, last_measurement_utc_s from device");
+		if ($stmt->execute(array())) {
+			while ($row = $stmt->fetch()) {
+				$device = new Device();
+				$device->id = $row["id"];
+				$device->external_id = $row["external_id"];
+				$device->type_id = $row["type_id"];
+				$device->label = $row["label"];
+				$device->filename = $row["filename"];
+				$device->last_measurement_utc_s = $row["last_measurement_utc_s"];
+				$devices[] = $device;
+			}
+		}
+	
+		return $devices;
+	}
+	
 	public function find_device($external_id, $type_id)
 	{
 		$stmt = $this->dbh->prepare("select id, external_id, type_id, label, filename, last_measurement_utc_s from device where external_id=? and type_id=?");
@@ -79,7 +100,7 @@ class LoggerDao
 			}
 		}
 
-		return null;
+		return $null;
 	}
 
 	public function find_measurements($dev_id)

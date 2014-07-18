@@ -40,6 +40,26 @@ print "];";
 
 	<div id="content">
 
+		<div>
+			<form method="get">
+				<ul>
+					<li>Laite: 
+						<select name="dev_id">
+<?php 
+$devices = $dao->find_devices();
+
+foreach ($devices as $device) {
+	print "<option value=\"" . $device->id . "\">" . $device->label . "</option>";
+}
+?>
+						</select>
+					</li>
+				</ul>
+				
+				<input type="submit" />
+			</form>
+		</div>
+	
 		<div class="demo-container">
 			<div id="placeholder" class="demo-placeholder"></div>
 		</div>
