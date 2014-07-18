@@ -34,7 +34,7 @@ function parse_measurement($dao)
 	$timestamp = time();
 
 	$m = null;
-	$device = $dao->find_device($id, $type);
+	$device = $dao->find_device_by_external_id($id, $type);
 
 	if ($device != null) {
 		$m = new Measurement();

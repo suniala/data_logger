@@ -70,33 +70,20 @@ class LoggerDao
 		$stmt = $this->dbh->prepare("select id, external_id, type_id, label, filename, last_measurement_utc_s from device");
 		if ($stmt->execute(array())) {
 			while ($row = $stmt->fetch()) {
-				$device = new Device();
-				$device->id = $row["id"];
-				$device->external_id = $row["external_id"];
-				$device->type_id = $row["type_id"];
-				$device->label = $row["label"];
-				$device->filename = $row["filename"];
-				$device->last_measurement_utc_s = $row["last_measurement_utc_s"];
-				$devices[] = $device;
+				$devices[] = $this->_map_device_row($row);
 			}
 		}
 	
 		return $devices;
 	}
 	
-	public function find_device($external_id, $type_id)
+	public function find_device_by_external_id($external_id, $type_id)
 	{
-		$stmt = $this->dbh->prepare("select id, external_id, type_id, label, filename, last_measurement_utc_s from device where external_id=? and type_id=?");
+		$stmt = $this->dbh->prepare("select id from device where external_id=? and type_id=?");
 		if ($stmt->execute(array($external_id, $type_id))) {
 			while ($row = $stmt->fetch()) {
-				$device = new Device();
-				$device->id = $row["id"];
-				$device->external_id = $row["external_id"];
-				$device->type_id = $row["type_id"];
-				$device->label = $row["label"];
-				$device->filename = $row["filename"];
-				$device->last_measurement_utc_s = $row["last_measurement_utc_s"];
-				return $device;
+				$dev_id = $row["id"];
+				return $this->find_device_by_id($dev_id);
 			}
 		}
 
@@ -108,14 +95,7 @@ class LoggerDao
 		$stmt = $this->dbh->prepare("select id, external_id, type_id, label, filename, last_measurement_utc_s from device where id=?");
 		if ($stmt->execute(array($dev_id))) {
 			while ($row = $stmt->fetch()) {
-				$device = new Device();
-				$device->id = $row["id"];
-				$device->external_id = $row["external_id"];
-				$device->type_id = $row["type_id"];
-				$device->label = $row["label"];
-				$device->filename = $row["filename"];
-				$device->last_measurement_utc_s = $row["last_measurement_utc_s"];
-				return $device;
+				return $this->_map_device_row($row);
 			}
 		}
 
@@ -149,6 +129,18 @@ class LoggerDao
 		}
 
 		return $measurements;
+	}
+
+	private function _map_device_row($row)
+	{
+		$device = new Device();
+		$device->id = $row["id"];
+		$device->external_id = $row["external_id"];
+		$device->type_id = $row["type_id"];
+		$device->label = $row["label"];
+		$device->filename = $row["filename"];
+		$device->last_measurement_utc_s = $row["last_measurement_utc_s"];
+		return $device;
 	}
 }
 
