@@ -101,6 +101,10 @@ form li {
 	display: inline;
 }
 
+#datepicker {
+	width: 110px;
+}
+
 ul.properties li {
 	list-style-type: none;
 	display: inline;
