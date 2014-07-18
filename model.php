@@ -122,18 +122,24 @@ class LoggerDao
 		return null;
 	}
 
-	public function find_measurements($dev_id)
+	public function find_measurements($dev_id, $ts_end_requested=null)
 	{
 		$measurements = array();
 		$ts_end = time();
-		$ts_begin = $ts_end - (60 * 60 * 24 * 7);
+		if ($ts_end_requested != null) {
+			$ts_end = $ts_end_requested;
+		}
+		$begin_of_day = strtotime("midnight", $ts_end);
+		$ts_end_of_day   = strtotime("tomorrow", $begin_of_day) - 1;
+		
+		$ts_begin = $ts_end_of_day - (60 * 60 * 24 * 7);
 		
 		$stmt = $this->dbh->prepare(
 				"select value, taken_utc_s " .
 				"from measurement " .
 				"where device_id=? and taken_utc_s >= ? and taken_utc_s <= ?" .
 				"order by taken_utc_s asc;");
-		if ($stmt->execute(array($dev_id, $ts_begin, $ts_end))) {
+		if ($stmt->execute(array($dev_id, $ts_begin, $ts_end_of_day))) {
 			while ($row = $stmt->fetch()) {
 				$measurement = new Measurement();
 				$measurement->taken_utc_s = $row["taken_utc_s"];

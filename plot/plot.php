@@ -3,10 +3,13 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<link href="examples.css" rel="stylesheet" type="text/css">
+	<link href="jquery-ui.css" rel="stylesheet" type="text/css">
 	<!--[if lte IE 8]><script language="javascript" type="text/javascript" src="../../excanvas.min.js"></script><![endif]-->
 	<script language="javascript" type="text/javascript" src="jquery.js"></script>
+	<script language="javascript" type="text/javascript" src="jquery-ui.js"></script>
 	<script language="javascript" type="text/javascript" src="jquery.flot.js"></script>
 	<script language="javascript" type="text/javascript" src="jquery.flot.time.js"></script>
+
 	<script type="text/javascript">
 
 	$(function() {
@@ -16,9 +19,16 @@
 include "../model.php";
 
 $dev_id = $_GET["dev_id"];
+$end_date_str = $_GET["end_date"];
+
+if ($end_date_str == "") {
+	$end_date_ts = time();
+} else {
+	$end_date_ts = strtotime($end_date_str);
+}
 
 $dao = new LoggerDao();
-$measurements = $dao->find_measurements($dev_id);
+$measurements = $dao->find_measurements($dev_id, $end_date_ts);
 $current_device = $dao->find_device_by_id($dev_id);
 
 print "var d = [";
@@ -36,6 +46,14 @@ print "];";
 	});
 
 	</script>
+
+	<script type="text/javascript">
+	$(function() {
+		$( "#datepicker" ).datepicker({ dateFormat: "yy-mm-dd", changeMonth: true,
+			changeYear: true });
+	});
+	</script>
+
 </head>
 <body>
 
@@ -55,6 +73,8 @@ foreach ($devices as $device) {
 ?>
 						</select>
 					</li>
+					<li>Loppupvm: 
+					<input type="text" name="end_date" id="datepicker" value="<?php print date("Y-m-d", $end_date_ts)?>"/></li>
 				</ul>
 				
 				<input type="submit" />
