@@ -19,6 +19,7 @@ $dev_id = $_GET["dev_id"];
 
 $dao = new LoggerDao();
 $measurements = $dao->find_measurements($dev_id);
+$current_device = $dao->find_device_by_id($dev_id);
 
 print "var d = [";
 foreach ($measurements as $measurement) {
@@ -59,7 +60,16 @@ foreach ($devices as $device) {
 				<input type="submit" />
 			</form>
 		</div>
-	
+
+		<div>
+			<ul class="properties">
+				<li>Laitteen nimi: <?php print $current_device->label ?></li>
+				<li>Ulkoinen tunniste: <?php print $current_device->external_id ?></li>
+				<li>Tyyppi: <?php print $current_device->type_id ?></li>
+				<li>Sisäinen tunniste: <?php print $current_device->id ?></li>
+			</ul>
+		</div>
+		
 		<div class="demo-container">
 			<div id="placeholder" class="demo-placeholder"></div>
 		</div>

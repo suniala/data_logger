@@ -95,3 +95,10 @@ input[type=checkbox] {
 .legend table {
 	border-spacing: 5px;
 }
+
+ul.properties li {
+	list-style-type: none;
+	display: inline;
+	border: 1px solid #cccccc;
+	padding: 2px;
+}
