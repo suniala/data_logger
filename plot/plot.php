@@ -132,8 +132,8 @@ foreach ($devices as $device) {
 <?php }?>
 		</div>
 		
-		<div class="demo-container">
-			<div id="placeholder" class="demo-placeholder"></div>
+		<div class="plot-container">
+			<div id="placeholder" class="plot-placeholder"></div>
 		</div>
 
 	</div>
