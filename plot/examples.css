@@ -105,6 +105,10 @@ form li {
 	width: 110px;
 }
 
+#weeks {
+	width: 30px;
+}
+
 ul.properties li {
 	list-style-type: none;
 	display: inline;

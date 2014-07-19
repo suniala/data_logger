@@ -2,11 +2,13 @@
 <html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	
 	<link href="examples.css" rel="stylesheet" type="text/css">
-	<link href="jquery-ui.css" rel="stylesheet" type="text/css">
+	<link href="jquery-ui-1.11.0/jquery-ui.css" rel="stylesheet" type="text/css">
+	
 	<!--[if lte IE 8]><script language="javascript" type="text/javascript" src="../../excanvas.min.js"></script><![endif]-->
-	<script language="javascript" type="text/javascript" src="jquery.js"></script>
-	<script language="javascript" type="text/javascript" src="jquery-ui.js"></script>
+	<script language="javascript" type="text/javascript" src="jquery-ui-1.11.0/external/jquery/jquery.js"></script>
+	<script language="javascript" type="text/javascript" src="jquery-ui-1.11.0/jquery-ui.js"></script>
 	<script language="javascript" type="text/javascript" src="jquery.flot.js"></script>
 	<script language="javascript" type="text/javascript" src="jquery.flot.time.js"></script>
 
@@ -56,6 +58,8 @@ print "];";
 	$(function() {
 		$( "#datepicker" ).datepicker({ dateFormat: "yy-mm-dd", changeMonth: true,
 			changeYear: true });
+
+		$( "#weeks" ).spinner({ min: 1, max: 53 });
 	});
 	</script>
 
@@ -92,19 +96,7 @@ foreach ($devices as $device) {
 						<input type="text" name="end_date" id="datepicker" value="<?php print date("Y-m-d", $end_date_ts)?>"/>
 					</li>
 					<li>Viikkoja:
-						<select name="weeks">
-<?php 
-for ($weeks_option=1; $weeks_option<=14; $weeks_option++) {
-	$weeks_select_attr = "";
-	if ($number_of_weeks == $weeks_option) {
-		$weeks_select_attr = " selected";
-	}
-	print "<option value=\"".$weeks_option."\"".$weeks_select_attr.">"
-		.$weeks_option
-		."</option>";
-}
-?>
-						</select>
+						<input name="weeks" id="weeks" value="<?php print $number_of_weeks ?>" />
 					</li>
 					<li><input type="submit" value="avaa" /></li>
 				</ul>
