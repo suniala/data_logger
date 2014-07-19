@@ -114,23 +114,65 @@ class LoggerDao
 		
 		$ts_begin = $ts_end_of_day - (60 * 60 * 24 * 7);
 		
+		$measurement_count = $this->_count_measurements($dev_id, $ts_begin, $ts_end_of_day);
+		$measurement_skip_count = $this->_calculate_skip_count($measurement_count);
+				
 		$stmt = $this->dbh->prepare(
 				"select value, taken_utc_s " .
 				"from measurement " .
 				"where device_id=? and taken_utc_s >= ? and taken_utc_s <= ?" .
 				"order by taken_utc_s asc;");
 		if ($stmt->execute(array($dev_id, $ts_begin, $ts_end_of_day))) {
+			$skipped = 0;
 			while ($row = $stmt->fetch()) {
-				$measurement = new Measurement();
-				$measurement->taken_utc_s = $row["taken_utc_s"];
-				$measurement->value = $row["value"];
-				$measurements[] = $measurement;
+				if ($skipped >= $measurement_skip_count) {
+					$measurement = new Measurement();
+					$measurement->taken_utc_s = $row["taken_utc_s"];
+					$measurement->value = $row["value"];
+					$measurements[] = $measurement;
+					
+					$skipped = 0;
+				} else {
+					$skipped = $skipped + 1;
+				}
 			}
 		}
 
 		return $measurements;
 	}
 
+	private function _calculate_skip_count($measurement_count)
+	{
+		$MAX_MEASUREMENTS = 500;
+		
+		$skip_count = 0;
+		if ($measurement_count > $MAX_MEASUREMENTS) {
+			// The division operator ("/") returns a float value unless 
+			// the two operands are integers (or strings that get 
+			// converted to integers) and the numbers are evenly 
+			// divisible, in which case an integer value will be returned. 
+			$ratio = $measurement_count / $MAX_MEASUREMENTS;
+			$skip_count = ceil($ratio) - 1;
+		}
+		
+		return $skip_count;
+	}
+	
+	private function _count_measurements($dev_id, $ts_begin, $ts_end)
+	{
+		$stmt = $this->dbh->prepare(
+				"select count(id) as m_count " .
+				"from measurement " .
+				"where device_id=? and taken_utc_s >= ? and taken_utc_s <= ?");
+		if ($stmt->execute(array($dev_id, $ts_begin, $ts_end))) {
+			while ($row = $stmt->fetch()) {
+				return $row["m_count"];
+			}
+		}
+		
+		return 0;
+	}
+	
 	private function _map_device_row($row)
 	{
 		$device = new Device();
