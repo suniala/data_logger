@@ -4,4 +4,4 @@ config.php
 .project
 .settings
 deploy.sh
-
+*~
