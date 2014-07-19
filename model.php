@@ -102,17 +102,16 @@ class LoggerDao
 		return null;
 	}
 
-	public function find_measurements($dev_id, $ts_end_requested=null)
+	public function find_measurements($dev_id, $ts_end, $number_of_days)
 	{
 		$measurements = array();
-		$ts_end = time();
-		if ($ts_end_requested != null) {
-			$ts_end = $ts_end_requested;
+		if ($ts_end == null) {
+			$ts_end = time();
 		}
 		$begin_of_day = strtotime("midnight", $ts_end);
 		$ts_end_of_day   = strtotime("tomorrow", $begin_of_day) - 1;
 		
-		$ts_begin = $ts_end_of_day - (60 * 60 * 24 * 7);
+		$ts_begin = $ts_end_of_day - (60 * 60 * 24 * $number_of_days);
 		
 		$measurement_count = $this->_count_measurements($dev_id, $ts_begin, $ts_end_of_day);
 		$measurement_skip_count = $this->_calculate_skip_count($measurement_count);
