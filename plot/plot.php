@@ -3,7 +3,7 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	
-	<link href="examples.css" rel="stylesheet" type="text/css">
+	<link href="plot.css" rel="stylesheet" type="text/css">
 	<link href="jquery-ui-1.11.0/jquery-ui.css" rel="stylesheet" type="text/css">
 	
 	<!--[if lte IE 8]><script language="javascript" type="text/javascript" src="../../excanvas.min.js"></script><![endif]-->
