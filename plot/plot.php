@@ -19,11 +19,12 @@
 <?php 
 
 include "../model.php";
+include "../util.php";
 
-$dev_id = $_GET["dev_id"];
-$end_date_str = $_GET["end_date"];
-$number_of_weeks = $_GET["weeks"];
-$scale = $_GET["scale"];
+$dev_id = http_get("dev_id");
+$end_date_str = http_get("end_date");
+$number_of_weeks = http_get("weeks");
+$scale = http_get("scale");
 
 if ($end_date_str == "") {
 	$end_date_ts = time();
@@ -91,7 +92,7 @@ $devices = $dao->find_devices();
 
 foreach ($devices as $device) {
 	$select_attr = "";
-	if ($current_device->id == $device->id) {
+	if ($current_device != null && $current_device->id == $device->id) {
 		$select_attr = " selected";
 	}
 	
