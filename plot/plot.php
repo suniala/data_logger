@@ -23,6 +23,7 @@ include "../model.php";
 $dev_id = $_GET["dev_id"];
 $end_date_str = $_GET["end_date"];
 $number_of_weeks = $_GET["weeks"];
+$scale = $_GET["scale"];
 
 if ($end_date_str == "") {
 	$end_date_ts = time();
@@ -38,6 +39,17 @@ $dao = new LoggerDao();
 $measurements = $dao->find_measurements($dev_id, $end_date_ts, $number_of_weeks*7);
 $current_device = $dao->find_device_by_id($dev_id);
 
+if ($scale == "fixed") {
+	if ($current_device->type_id == 1) {
+		$scale_args_y = "ticks: 10, min: -30, max: 30, tickDecimals: 0";
+	} else {
+		$scale_args_y = "ticks: 10, min: 0, max: 100, tickDecimals: 0";
+	}
+} else {
+	$scale = "auto";
+	$scale_args_y = "";
+}
+
 print "var d = [";
 foreach ($measurements as $measurement) {
 	print "[" . $measurement->taken_utc_s*1000 . "," . $measurement->value . "],";
@@ -47,7 +59,8 @@ print "];";
 ?>
 		
 		$.plot("#placeholder", [d], {
-			xaxis: { mode: "time" }
+			xaxis: { mode: "time" },
+			yaxis: { <?php print $scale_args_y ?> }
 		});
 
 	});
@@ -97,6 +110,10 @@ foreach ($devices as $device) {
 					</li>
 					<li>Viikkoja:
 						<input name="weeks" id="weeks" value="<?php print $number_of_weeks ?>" />
+					</li>
+					<li>Asteikko:
+						<input id="scale-auto" type="radio" name="scale" value="auto" <?php if ($scale=="auto") { print "checked"; } ?>/><label for="scale-auto">auto</label>
+						<input id="scale-fixed" type="radio" name="scale" value="fixed" <?php if ($scale=="fixed") { print "checked"; } ?>/><label for="scale-fixed">kiinteä</label>
 					</li>
 					<li><input type="submit" value="avaa" /></li>
 				</ul>
