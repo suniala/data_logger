@@ -126,55 +126,59 @@ foreach ($devices as $device) {
 	}
 }
 ?>
-				<div>
+				<div id="form-container">
 					<table id="device-selection">
-					<tr>
-					<th>&nbsp;</th>
-					<?php 
-					foreach ($dev_map as $dev_ext_id=>$dev_id_map) {
-						printf("<th>%s</th>", $dev_ext_id);
-					}
-					?>
-					</tr>
-					<tr>
-					<td>Lämpö</td>
-					<?php 
-					foreach ($dev_map as $dev_ext_id=>$dev_id_map) {
-						if (isset($dev_id_map["temp"])) {
-							$device_checked_attr = in_array($dev_id_map["temp"], $dev_ids) ? "checked" : "";
-							printf("<td><input id=\"check-%s\" type=\"checkbox\" name=\"dev_id[]\" value=\"%s\"/ %s><label for=\"check-%s\">x</label></td>", 
-									$dev_id_map["temp"], $dev_id_map["temp"], $device_checked_attr, $dev_id_map["temp"]);
-						} else {
-							printf("<td>-</td>");
+						<thead>
+						<tr>
+						<th>&nbsp;</th>
+						<?php 
+						foreach ($dev_map as $dev_ext_id=>$dev_id_map) {
+							printf("<th>%s</th>", $dev_ext_id);
 						}
-					}
-					?>
-					</tr>
-					<tr>
-					<td>Kosteus</td>
-					<?php 
-					foreach ($dev_map as $dev_ext_id=>$dev_id_map) {
-						if (isset($dev_id_map["rh"])) {
-							$device_checked_attr = in_array($dev_id_map["rh"], $dev_ids) ? "checked" : "";
-							printf("<td><input id=\"check-%s\" type=\"checkbox\" name=\"dev_id[]\" value=\"%s\" %s/><label for=\"check-%s\">x</label></td>", 
-									$dev_id_map["rh"], $dev_id_map["rh"], $device_checked_attr, $dev_id_map["rh"]);
-						} else {
-							printf("<td>-</td>");
+						?>
+						</tr>
+						</thead>
+						<tbody>
+						<tr>
+						<td>Lämpö</td>
+						<?php 
+						foreach ($dev_map as $dev_ext_id=>$dev_id_map) {
+							if (isset($dev_id_map["temp"])) {
+								$device_checked_attr = in_array($dev_id_map["temp"], $dev_ids) ? "checked" : "";
+								printf("<td><input id=\"check-%s\" type=\"checkbox\" name=\"dev_id[]\" value=\"%s\"/ %s><label for=\"check-%s\">x</label></td>", 
+										$dev_id_map["temp"], $dev_id_map["temp"], $device_checked_attr, $dev_id_map["temp"]);
+							} else {
+								printf("<td>-</td>");
+							}
 						}
-					}
-					?>
-					</tr>
+						?>
+						</tr>
+						<tr>
+						<td>Kosteus</td>
+						<?php 
+						foreach ($dev_map as $dev_ext_id=>$dev_id_map) {
+							if (isset($dev_id_map["rh"])) {
+								$device_checked_attr = in_array($dev_id_map["rh"], $dev_ids) ? "checked" : "";
+								printf("<td><input id=\"check-%s\" type=\"checkbox\" name=\"dev_id[]\" value=\"%s\" %s/><label for=\"check-%s\">x</label></td>", 
+										$dev_id_map["rh"], $dev_id_map["rh"], $device_checked_attr, $dev_id_map["rh"]);
+							} else {
+								printf("<td>-</td>");
+							}
+						}
+						?>
+						</tr>
+						</tbody>
 					</table>				
-				</div>		
-				<ul>
-					<li>Loppupäivä: 
-						<input type="text" name="end_date" id="datepicker" value="<?php print date("Y-m-d", $end_date_ts)?>"/>
-					</li>
-					<li>Viikkoja:
-						<input name="weeks" id="weeks" value="<?php print $number_of_weeks ?>" />
-					</li>
-					<li><input type="submit" value="avaa" /></li>
-				</ul>
+					<ul>
+						<li>Loppupäivä: 
+							<input type="text" name="end_date" id="datepicker" value="<?php print date("Y-m-d", $end_date_ts)?>"/>
+						</li>
+						<li>Viikkoja:
+							<input name="weeks" id="weeks" value="<?php print $number_of_weeks ?>" />
+						</li>
+						<li><input type="submit" value="avaa" /></li>
+					</ul>
+				</div>
 			</form>
 		</div>
 
