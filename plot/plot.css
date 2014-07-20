@@ -31,6 +31,10 @@
 	line-height: 1.2em;
 }
 
+form ul {
+	padding-left: 0;
+}
+
 form li {
 	list-style-type: none;
 	display: inline;
@@ -44,9 +48,10 @@ form li {
 	width: 30px;
 }
 
-ul.properties li {
-	list-style-type: none;
-	display: inline;
+table#device-selection {
 	border: 1px solid #cccccc;
-	padding: 2px;
+}
+
+table#device-selection td, table#device-selection th {
+	border: 1px solid #cccccc;
 }

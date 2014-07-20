@@ -17,10 +17,15 @@
 include "../model.php";
 include "../util.php";
 
-$dev_id = http_get("dev_id");
+$dev_id_param = http_get("dev_id");
 $end_date_str = http_get("end_date");
 $number_of_weeks = http_get("weeks");
-$scale = http_get("scale");
+
+if (is_array($dev_id_param)) {
+	$dev_ids = $dev_id_param;
+} else {
+	$dev_ids = array($dev_id_param);
+}
 
 if ($end_date_str == "") {
 	$end_date_ts = time();
@@ -33,18 +38,6 @@ if (filter_var($number_of_weeks, FILTER_VALIDATE_INT) == FALSE) {
 }
 
 $dao = new LoggerDao();
-$current_device = $dao->find_device_by_id($dev_id);
-
-if ($scale == "fixed") {
-	if ($current_device->type_id == 1) {
-		$scale_args_y = "ticks: 10, min: -30, max: 30, tickDecimals: 0";
-	} else {
-		$scale_args_y = "ticks: 10, min: 0, max: 100, tickDecimals: 0";
-	}
-} else {
-	$scale = "auto";
-	$scale_args_y = "";
-}
 
 ?>
 
@@ -66,9 +59,6 @@ if ($scale == "fixed") {
 			points: {
 				show: false
 			},
-			yaxis: {
-				<?php print $scale_args_y ?>
-			},
 			xaxis: {
 				mode: "time"
 			}
@@ -80,8 +70,6 @@ if ($scale == "fixed") {
 
 		var alreadyFetched = {};
 
-		var dataurl = "<?php printf("series.php?dev_id=%s&end_date=%s&weeks=%s", $dev_id, $end_date_str, $number_of_weeks); ?>";
-
 		function onDataReceived(series) {
 			// Push the new data onto our existing data array
 			if (!alreadyFetched[series.label]) {
@@ -92,12 +80,12 @@ if ($scale == "fixed") {
 			$.plot("#placeholder", data, options);
 		}
 
-		$.ajax({
-			url: dataurl,
-			type: "GET",
-			dataType: "json",
-			success: onDataReceived
-		});
+<?php
+foreach ($dev_ids as $dev_id) {
+	$data_url = sprintf("series.php?dev_id=%s&end_date=%s&weeks=%s", $dev_id, $end_date_str, $number_of_weeks);
+	printf("$.ajax({url: \"%s\", type: \"GET\", dataType: \"json\", success: onDataReceived});", $data_url);
+}
+?>
 	});
 	</script>
 		
@@ -108,53 +96,72 @@ if ($scale == "fixed") {
 
 		<div>
 			<form method="get">
-				<ul>
-					<li>Laite: 
-						<select name="dev_id">
-<?php 
+<?php
 $devices = $dao->find_devices();
-
+$dev_map = array();
 foreach ($devices as $device) {
-	$select_attr = "";
-	if ($current_device != null && $current_device->id == $device->id) {
-		$select_attr = " selected";
+	if (0 <> substr_compare("test", $device->label, 0, 4)) {
+		if (!isset($dev_map[$device->external_id])) {
+			$dev_map[$device->external_id] = array();
+		}
+		if ($device->type_id == 1) {
+			$dev_map[$device->external_id]["temp"] = $device->id;
+		} elseif ($device->type_id == 3) {
+			$dev_map[$device->external_id]["rh"] = $device->id;
+		}
 	}
-	
-	print "<option "
-		. "value=\"" . $device->id . "\""
-		. $select_attr
-		. ">"
-		. $device->label
-		. "</option>";
 }
 ?>
-						</select>
-					</li>
+				<div>
+					<table id="device-selection">
+					<tr>
+					<th>&nbsp;</th>
+					<?php 
+					foreach ($dev_map as $dev_ext_id=>$dev_id_map) {
+						printf("<th>%s</th>", $dev_ext_id);
+					}
+					?>
+					</tr>
+					<tr>
+					<td>Lämpö</td>
+					<?php 
+					foreach ($dev_map as $dev_ext_id=>$dev_id_map) {
+						if (isset($dev_id_map["temp"])) {
+							$device_checked_attr = in_array($dev_id_map["temp"], $dev_ids) ? "checked" : "";
+							printf("<td><input type=\"checkbox\" name=\"dev_id[]\" value=\"%s\"/ %s></td>", 
+									$dev_id_map["temp"], $device_checked_attr);
+						} else {
+							printf("<td>-</td>");
+						}
+					}
+					?>
+					</tr>
+					<tr>
+					<td>Kosteus</td>
+					<?php 
+					foreach ($dev_map as $dev_ext_id=>$dev_id_map) {
+						if (isset($dev_id_map["rh"])) {
+							$device_checked_attr = in_array($dev_id_map["rh"], $dev_ids) ? "checked" : "";
+							printf("<td><input type=\"checkbox\" name=\"dev_id[]\" value=\"%s\" %s/></td>", 
+									$dev_id_map["rh"], $device_checked_attr);
+						} else {
+							printf("<td>-</td>");
+						}
+					}
+					?>
+					</tr>
+					</table>				
+				</div>		
+				<ul>
 					<li>Loppupäivä: 
 						<input type="text" name="end_date" id="datepicker" value="<?php print date("Y-m-d", $end_date_ts)?>"/>
 					</li>
 					<li>Viikkoja:
 						<input name="weeks" id="weeks" value="<?php print $number_of_weeks ?>" />
 					</li>
-					<li>Asteikko:
-						<input id="scale-auto" type="radio" name="scale" value="auto" <?php if ($scale=="auto") { print "checked"; } ?>/><label for="scale-auto">auto</label>
-						<input id="scale-fixed" type="radio" name="scale" value="fixed" <?php if ($scale=="fixed") { print "checked"; } ?>/><label for="scale-fixed">kiinteä</label>
-					</li>
 					<li><input type="submit" value="avaa" /></li>
 				</ul>
-				
 			</form>
-		</div>
-
-		<div>
-<?php if ($current_device != null) { ?>
-			<ul class="properties">
-				<li>Laitteen nimi: <?php print $current_device->label ?></li>
-				<li>Ulkoinen tunniste: <?php print $current_device->external_id ?></li>
-				<li>Tyyppi: <?php print $current_device->type_id ?></li>
-				<li>Sisäinen tunniste: <?php print $current_device->id ?></li>
-			</ul>
-<?php }?>
 		</div>
 
 		<div class="plot-container">
