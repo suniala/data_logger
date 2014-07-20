@@ -47,6 +47,8 @@ $dao = new LoggerDao();
 			changeYear: true });
 
 		$( "#weeks" ).spinner({ min: 1, max: 53 });
+
+		$( "input[type='checkbox']" ).button();
 	});
 	</script>
 
@@ -140,8 +142,8 @@ foreach ($devices as $device) {
 					foreach ($dev_map as $dev_ext_id=>$dev_id_map) {
 						if (isset($dev_id_map["temp"])) {
 							$device_checked_attr = in_array($dev_id_map["temp"], $dev_ids) ? "checked" : "";
-							printf("<td><input type=\"checkbox\" name=\"dev_id[]\" value=\"%s\"/ %s></td>", 
-									$dev_id_map["temp"], $device_checked_attr);
+							printf("<td><input id=\"check-%s\" type=\"checkbox\" name=\"dev_id[]\" value=\"%s\"/ %s><label for=\"check-%s\">x</label></td>", 
+									$dev_id_map["temp"], $dev_id_map["temp"], $device_checked_attr, $dev_id_map["temp"]);
 						} else {
 							printf("<td>-</td>");
 						}
@@ -154,8 +156,8 @@ foreach ($devices as $device) {
 					foreach ($dev_map as $dev_ext_id=>$dev_id_map) {
 						if (isset($dev_id_map["rh"])) {
 							$device_checked_attr = in_array($dev_id_map["rh"], $dev_ids) ? "checked" : "";
-							printf("<td><input type=\"checkbox\" name=\"dev_id[]\" value=\"%s\" %s/></td>", 
-									$dev_id_map["rh"], $device_checked_attr);
+							printf("<td><input id=\"check-%s\" type=\"checkbox\" name=\"dev_id[]\" value=\"%s\" %s/><label for=\"check-%s\">x</label></td>", 
+									$dev_id_map["rh"], $dev_id_map["rh"], $device_checked_attr, $dev_id_map["rh"]);
 						} else {
 							printf("<td>-</td>");
 						}
