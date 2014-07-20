@@ -12,10 +12,6 @@
 	<script language="javascript" type="text/javascript" src="jquery.flot.js"></script>
 	<script language="javascript" type="text/javascript" src="jquery.flot.time.js"></script>
 
-	<script type="text/javascript">
-
-	$(function() {
-
 <?php 
 
 include "../model.php";
@@ -37,7 +33,6 @@ if (filter_var($number_of_weeks, FILTER_VALIDATE_INT) == FALSE) {
 }
 
 $dao = new LoggerDao();
-$measurements = $dao->find_measurements($dev_id, $end_date_ts, $number_of_weeks*7);
 $current_device = $dao->find_device_by_id($dev_id);
 
 if ($scale == "fixed") {
@@ -51,22 +46,7 @@ if ($scale == "fixed") {
 	$scale_args_y = "";
 }
 
-print "var d = [";
-foreach ($measurements as $measurement) {
-	print "[" . $measurement->taken_utc_s*1000 . "," . $measurement->value . "],";
-}
-print "];";
-
 ?>
-		
-		$.plot("#placeholder", [d], {
-			xaxis: { mode: "time" },
-			yaxis: { <?php print $scale_args_y ?> }
-		});
-
-	});
-
-	</script>
 
 	<script type="text/javascript">
 	$(function() {
@@ -77,6 +57,50 @@ print "];";
 	});
 	</script>
 
+	<script type="text/javascript">
+	$(function() {
+		var options = {
+			lines: {
+				show: true
+			},
+			points: {
+				show: false
+			},
+			yaxis: {
+				<?php print $scale_args_y ?>
+			},
+			xaxis: {
+				mode: "time"
+			}
+		};
+
+		var data = [];
+
+		$.plot("#placeholder", data, options);
+
+		var alreadyFetched = {};
+
+		var dataurl = "<?php printf("series.php?dev_id=%s&end_date=%s&weeks=%s", $dev_id, $end_date_str, $number_of_weeks); ?>";
+
+		function onDataReceived(series) {
+			// Push the new data onto our existing data array
+			if (!alreadyFetched[series.label]) {
+				alreadyFetched[series.label] = true;
+				data.push(series);
+			}
+
+			$.plot("#placeholder", data, options);
+		}
+
+		$.ajax({
+			url: dataurl,
+			type: "GET",
+			dataType: "json",
+			success: onDataReceived
+		});
+	});
+	</script>
+		
 </head>
 <body>
 
@@ -132,12 +156,11 @@ foreach ($devices as $device) {
 			</ul>
 <?php }?>
 		</div>
-		
+
 		<div class="plot-container">
 			<div id="placeholder" class="plot-placeholder"></div>
 		</div>
 
 	</div>
-
 </body>
 </html>
