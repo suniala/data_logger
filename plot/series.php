@@ -25,6 +25,7 @@ $current_device = $dao->find_device_by_id($dev_id);
 
 print "{";
 print "\"label\": \"".$current_device->label."\",";
+printf("\"yaxis\": %s,", $current_device->type_id == 1 ? "1" : "2");
 print "\"data\": [";
 $first = true;
 foreach ($measurements as $measurement) {

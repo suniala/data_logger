@@ -52,6 +52,14 @@ $dao = new LoggerDao();
 
 	<script type="text/javascript">
 	$(function() {
+		function tempFormatter(v, axis) {
+			return v.toFixed(axis.tickDecimals) + " &deg;C"
+		}
+		
+		function rhFormatter(v, axis) {
+			return v.toFixed(axis.tickDecimals) + " %"
+		}
+		
 		var options = {
 			lines: {
 				show: true
@@ -61,7 +69,11 @@ $dao = new LoggerDao();
 			},
 			xaxis: {
 				mode: "time"
-			}
+			},
+			yaxes: [
+				{ position: "left", tickFormatter: tempFormatter },
+				{ position: "right", tickFormatter: rhFormatter }
+			]
 		};
 
 		var data = [];
