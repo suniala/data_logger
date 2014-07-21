@@ -75,7 +75,11 @@ $dao = new LoggerDao();
 			yaxes: [
 				{ position: "left", tickFormatter: tempFormatter },
 				{ position: "right", tickFormatter: rhFormatter }
-			]
+			],
+			legend: {
+				noColumns: 8,
+				container: "#legend"
+			}
 		};
 
 		var data = [];
@@ -182,6 +186,8 @@ foreach ($devices as $device) {
 			</form>
 		</div>
 
+		<div id="legend"></div>
+		
 		<div class="plot-container">
 			<div id="placeholder" class="plot-placeholder"></div>
 		</div>

@@ -1,7 +1,7 @@
 #content {
 	width: 880px;
 	margin: 0 auto;
-	padding: 10px;
+	padding: 0px 10px;
 }
 
 .plot-container {
@@ -67,4 +67,7 @@ table#device-selection td, table#device-selection th {
 
 table#device-selection .ui-button-text-only .ui-button-text {
     padding: 2px 4px;
+}
+
+#legend {
 }
