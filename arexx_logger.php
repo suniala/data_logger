@@ -9,6 +9,15 @@ function log_data($dao, $measurement)
 	$dao->update_device_ts($measurement);
 }
 
+function route_data($dao, $measurement)
+{
+	if ($measurement->device->has_route()) {
+		$get_url = $measurement->device->build_get_url($measurement);
+		$handle = fopen($get_url, "r");
+		stream_get_meta_data($handle);
+	}
+}
+
 function skip_logging($measurement)
 {
 	global $MEASUREMENT_INTERVAL_SECONDS;
@@ -60,6 +69,7 @@ try {
 	if ($measurement != null) {
 		if (!skip_logging($measurement)) {
 			log_data($dao, $measurement);
+			route_data($dao, $measurement);
 		}
 	}
 

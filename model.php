@@ -18,6 +18,18 @@ class Device
 	public $label;
 	public $filename;
 	public $last_measurement_utc_s;
+	public $route_url = null;
+	
+	public function has_route()
+	{
+		return $this->route_url != null;
+	}
+	
+	public function build_get_url($measurement)
+	{
+		$get_url = sprintf("%s?value=%s", $this->route_url, $measurement->value);
+		return $get_url;
+	}
 }
 
 class LoggerDao
@@ -92,7 +104,7 @@ class LoggerDao
 
 	public function find_device_by_id($dev_id)
 	{
-		$stmt = $this->dbh->prepare("select id, external_id, type_id, label, filename, last_measurement_utc_s from device where id=?");
+		$stmt = $this->dbh->prepare("select id, external_id, type_id, label, filename, last_measurement_utc_s, route_url from device where id=?");
 		if ($stmt->execute(array($dev_id))) {
 			while ($row = $stmt->fetch()) {
 				return $this->_map_device_row($row);
@@ -181,6 +193,7 @@ class LoggerDao
 		$device->label = $row["label"];
 		$device->filename = $row["filename"];
 		$device->last_measurement_utc_s = $row["last_measurement_utc_s"];
+		$device->route_url = $row["route_url"];
 		return $device;
 	}
 }

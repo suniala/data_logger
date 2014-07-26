@@ -1,0 +1,1 @@
+alter table device add column route_url text;
