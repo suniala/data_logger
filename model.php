@@ -27,7 +27,10 @@ class Device
 	
 	public function build_get_url($measurement)
 	{
-		$get_url = sprintf("%s?value=%s", $this->route_url, $measurement->value);
+		$get_url = sprintf("%s?value=%s&utc_ts=%s", 
+				$this->route_url, 
+				$measurement->value, 
+				$measurement->taken_utc_s);
 		return $get_url;
 	}
 }

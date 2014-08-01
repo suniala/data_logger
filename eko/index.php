@@ -9,9 +9,14 @@
 		<?php 
 
 		$log_handle = fopen("value.dat", "r");
-		$last_value = fread($log_handle, filesize("value.dat"));
+		$last_value_line = fread($log_handle, filesize("value.dat"));
 		fclose($log_handle);
 
+		$last_value_array = explode(";", $last_value_line);
+		$last_value = $last_value_array[0];
+		$last_value_utc_ts = $last_value_array[1];
+		$last_value_date = strftime("%d.%m.%Y klo %H.%M", $last_value_utc_ts);
+		
 		$green_class = "green";
 		$yellow_class = "yellow";
 		$red_class = "red";
@@ -40,7 +45,7 @@
 			</div>
 
 			<div id="info">
-				<p>Veden lämpötila varaajassa on</p>
+				<p>Veden lämpötila varaajassa <?php print $last_value_date ?> on</p>
 				<p id="temp">
 					<?php print $last_value ?> &deg;C
 				</p>
