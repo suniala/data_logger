@@ -1,10 +1,35 @@
+body {
+	text-align: center;
+	font-family: monospace;
+	font-size: 16px;
+}
+
+div#content {
+	margin: 20px auto 4px auto;
+	width: 400px;
+}
+
+div#lights {
+	float: left;
+}
+
+div#info { 
+	padding-top: 50px;
+	margin-left: 100px;
+}
+
+p#temp {
+	font-size: 40px;
+}
+
 td {
-	width: 50px;
-	height: 50px;
+	width: 80px;
+	height: 80px;
+	border-radius: 40px;
 }
 
 .green {
-	background-color: #101060;
+	background-color: black;
 }
 
 .green.active {
@@ -12,7 +37,7 @@ td {
 }
 
 .yellow {
-	background-color: #101010;
+	background-color: black;
 }
 
 .yellow.active {
@@ -20,7 +45,7 @@ td {
 }
 
 .red {
-	background-color: #601010;
+	background-color: black;
 }
 
 .red.active {
