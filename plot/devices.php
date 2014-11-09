@@ -18,6 +18,9 @@ $dao = new LoggerDao();
 
 	<h1>Mittareiden tilat</h1>
 
+	<p>Tämä data päivittyy aina kun Arexxilta tulee palvelimelle asti
+		mittauksia. Mittauksien suodatus ei siis vaikuta tähän dataan.</p>
+
 	<table>
 		<tr>
 			<th>tunniste</th>
