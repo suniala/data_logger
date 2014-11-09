@@ -52,14 +52,17 @@ form li {
 	width: 30px;
 }
 
-table#device-selection {
+table {
 	border: 1px solid #cccccc;
 	border-collapse: collapse;
+}
+
+table#device-selection {
 	float: left;
 	margin-right: 20px;
 }
 
-table#device-selection td, table#device-selection th {
+td, th {
 	border: 1px solid #cccccc;
 	text-align: center;
 	padding: 2px;

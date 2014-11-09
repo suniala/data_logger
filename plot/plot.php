@@ -2,7 +2,8 @@
 <html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-	
+	<title>Käppyrät</title>
+
 	<link href="plot.css" rel="stylesheet" type="text/css">
 	<link href="jquery-ui-1.11.0/jquery-ui.css" rel="stylesheet" type="text/css">
 	
