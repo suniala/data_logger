@@ -23,11 +23,12 @@ $dao = new LoggerDao();
 $measurements = $dao->find_measurements($dev_id, $end_date_ts, $number_of_weeks*7);
 $current_device = $dao->find_device_by_id($dev_id);
 $yaxis = $current_device->type_id == 1 ? 1 : 2;
+$points = $yaxis == 1 ? 'false' : 'true';
 
 print "{";
 print "\"label\": \"".$current_device->label."\",";
 printf('"yaxis": %s,', $yaxis);
-printf('"lines": { "lineWidth": "%s" },', $yaxis*2);
+printf('"points": { "show": %s },', $points);
 print "\"data\": [";
 $first = true;
 foreach ($measurements as $measurement) {

@@ -67,9 +67,6 @@ $dao = new LoggerDao();
 			lines: {
 				show: true
 			},
-			points: {
-				show: false
-			},
 			xaxis: {
 				mode: "time",
 				timezone: "browser"  
