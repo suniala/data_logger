@@ -71,7 +71,8 @@ $dao = new LoggerDao();
 				show: false
 			},
 			xaxis: {
-				mode: "time"
+				mode: "time",
+				timezone: "browser"  
 			},
 			yaxes: [
 				{ position: "left", tickFormatter: tempFormatter },
