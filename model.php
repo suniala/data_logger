@@ -84,7 +84,7 @@ class LoggerDao
 	{
 		$devices = array();
 		
-		$stmt = $this->dbh->prepare("select id, external_id, type_id, label, filename, last_measurement_utc_s from device");
+		$stmt = $this->dbh->prepare("select id, external_id, type_id, label, filename, last_measurement_utc_s, route_url from device");
 		if ($stmt->execute(array())) {
 			while ($row = $stmt->fetch()) {
 				$devices[] = $this->_map_device_row($row);

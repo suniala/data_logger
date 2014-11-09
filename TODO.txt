@@ -1,5 +1,3 @@
 - Enable foreign key support per connection. See http://sqlite.org/foreignkeys.html#fk_enable
 
-- Fix find_devices vs. _map_device_row
-
 - Move eko data file
