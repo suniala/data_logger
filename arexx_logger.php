@@ -3,6 +3,11 @@
 include "model.php";
 include "config.php";
 
+function log_device_heartbeat($dao, $measurement)
+{
+	$dao->log_device_heartbeat($measurement);
+}
+
 function log_data($dao, $measurement)
 {
 	$dao->write_data($measurement);
@@ -23,13 +28,15 @@ function skip_logging($measurement)
 	global $MEASUREMENT_INTERVAL_SECONDS;
 	$skip = TRUE;
 
-	$curr_time = time();
-	$mod_time = $measurement->device->last_measurement_utc_s;
-	$diff_time = $curr_time - $mod_time;
-	if ($diff_time > ($MEASUREMENT_INTERVAL_SECONDS)) {
-		$skip = FALSE;
-	} else {
-		$skip = TRUE;
+	if (!$measurement->device->is_transient()) {
+		$curr_time = time();
+		$mod_time = $measurement->device->last_measurement_utc_s;
+		$diff_time = $curr_time - $mod_time;
+		if ($diff_time > ($MEASUREMENT_INTERVAL_SECONDS)) {
+			$skip = FALSE;
+		} else {
+			$skip = TRUE;
+		}
 	}
 
 	return $skip;
@@ -45,12 +52,17 @@ function parse_measurement($dao)
 	$m = null;
 	$device = $dao->find_device_by_external_id($id, $type);
 
-	if ($device != null) {
-		$m = new Measurement();
-		$m->device = $device;
-		$m->value = $value;
-		$m->taken_utc_s = $timestamp;
+	if ($device == null) {
+		// Create a transient device.
+		$device = new Device();
+		$device->external_id = $id;
+		$device->type_id = $type;
 	}
+
+	$m = new Measurement();
+	$m->device = $device;
+	$m->value = $value;
+	$m->taken_utc_s = $timestamp;
 
 	return $m;
 }
@@ -66,11 +78,11 @@ try {
 	$dao->beginTransaction();
 
 	$measurement = parse_measurement($dao);
-	if ($measurement != null) {
-		if (!skip_logging($measurement)) {
-			log_data($dao, $measurement);
-			route_data($dao, $measurement);
-		}
+	log_device_heartbeat($dao, $measurement);
+	
+	if (!skip_logging($measurement)) {
+		log_data($dao, $measurement);
+		route_data($dao, $measurement);
 	}
 
 	$dao->commit();

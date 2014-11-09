@@ -25,6 +25,11 @@ class Device
 		return $this->route_url != null;
 	}
 	
+	public function is_transient()
+	{
+		return $this->id == null;
+	}
+	
 	public function build_get_url($measurement)
 	{
 		global $ROUTING_PASSWORD;
@@ -35,6 +40,14 @@ class Device
 				$ROUTING_PASSWORD);
 		return $get_url;
 	}
+}
+
+class DeviceHeartbeat
+{
+	public $external_id;
+	public $type_id;
+	public $last_measurement_utc_s;
+	public $last_value;
 }
 
 class LoggerDao
@@ -79,7 +92,57 @@ class LoggerDao
 		$stmt->bindParam(2, $measurement->device->id);
 		$stmt->execute();
 	}
+	
+	public function log_device_heartbeat($measurement)
+	{
+		$up_stmt = $this->dbh->prepare(
+				"update device_heartbeat set "
+				. "last_measurement_utc_s = ?, last_value = ? "
+				. "where external_id = ? and type_id = ?"
+		);
+		$up_stmt->bindParam(1, $measurement->taken_utc_s);
+		$up_stmt->bindParam(2, $measurement->value);
+		$up_stmt->bindParam(3, $measurement->device->external_id);
+		$up_stmt->bindParam(4, $measurement->device->type_id);
+		$up_stmt->execute();
 
+		if ($up_stmt->rowCount() < 1) {
+			$ins_stmt = $this->dbh->prepare(
+					"insert into device_heartbeat "
+					. "(last_measurement_utc_s, last_value, external_id, type_id) "
+					. "values (?, ?, ?, ?)"
+			);
+			$ins_stmt->bindParam(1, $measurement->taken_utc_s);
+			$ins_stmt->bindParam(2, $measurement->value);
+			$ins_stmt->bindParam(3, $measurement->device->external_id);
+			$ins_stmt->bindParam(4, $measurement->device->type_id);
+			$ins_stmt->execute();
+		}
+	}
+
+	public function find_device_heartbeats()
+	{
+		$dev_hrtbts = array();
+	
+		$stmt = $this->dbh->prepare(
+				"select external_id, type_id, last_measurement_utc_s, last_value "
+				. "from device_heartbeat "
+				. "order by external_id, type_id"
+		);
+		if ($stmt->execute(array())) {
+			while ($row = $stmt->fetch()) {
+				$dev_hrtbt = new DeviceHeartbeat();
+				$dev_hrtbt->external_id = $row["external_id"];
+				$dev_hrtbt->type_id = $row["type_id"];
+				$dev_hrtbt->last_measurement_utc_s = $row["last_measurement_utc_s"];
+				$dev_hrtbt->last_value = $row["last_value"];
+				$dev_hrtbts[] = $dev_hrtbt;
+			}
+		}
+	
+		return $dev_hrtbts;
+	}
+	
 	public function find_devices()
 	{
 		$devices = array();
@@ -156,7 +219,7 @@ class LoggerDao
 
 		return $measurements;
 	}
-
+	
 	private function _calculate_skip_count($measurement_count)
 	{
 		$MAX_MEASUREMENTS = 500;
