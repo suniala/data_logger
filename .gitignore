@@ -5,3 +5,4 @@ config.php
 .settings
 deploy.sh
 *~
+eko/value.dat
