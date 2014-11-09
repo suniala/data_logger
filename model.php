@@ -222,15 +222,15 @@ class LoggerDao
 	
 	private function _calculate_skip_count($measurement_count)
 	{
-		$MAX_MEASUREMENTS = 500;
+		global $PLOT_POINTS_MAX;
 		
 		$skip_count = 0;
-		if ($measurement_count > $MAX_MEASUREMENTS) {
+		if ($measurement_count > $PLOT_POINTS_MAX) {
 			// The division operator ("/") returns a float value unless 
 			// the two operands are integers (or strings that get 
 			// converted to integers) and the numbers are evenly 
 			// divisible, in which case an integer value will be returned. 
-			$ratio = $measurement_count / $MAX_MEASUREMENTS;
+			$ratio = $measurement_count / $PLOT_POINTS_MAX;
 			$skip_count = ceil($ratio) - 1;
 		}
 		
