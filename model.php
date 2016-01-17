@@ -44,6 +44,7 @@ class Device
 
 class DeviceHeartbeat
 {
+	public $label;
 	public $external_id;
 	public $type_id;
 	public $last_measurement_utc_s;
@@ -125,13 +126,20 @@ class LoggerDao
 		$dev_hrtbts = array();
 	
 		$stmt = $this->dbh->prepare(
-				"select external_id, type_id, last_measurement_utc_s, last_value "
-				. "from device_heartbeat "
-				. "order by external_id, type_id"
+				"select " 
+				. "  d.label, dh.external_id, dh.type_id, " 
+				. "	 dh.last_measurement_utc_s, dh.last_value "
+				. "from device_heartbeat dh "
+				. "left outer join device d "
+				. "on "
+				. "  dh.external_id=d.external_id "
+				. "  and dh.type_id=d.type_id "
+				. "order by d.label desc, dh.external_id, dh.type_id"
 		);
 		if ($stmt->execute(array())) {
 			while ($row = $stmt->fetch()) {
 				$dev_hrtbt = new DeviceHeartbeat();
+				$dev_hrtbt->label = $row["label"];
 				$dev_hrtbt->external_id = $row["external_id"];
 				$dev_hrtbt->type_id = $row["type_id"];
 				$dev_hrtbt->last_measurement_utc_s = $row["last_measurement_utc_s"];
